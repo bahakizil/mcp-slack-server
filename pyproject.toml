@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "slack-mcp-server"
 version = "1.0.0"
-description = "Professional FastMCP server for Slack workspace automation with 30+ tools"
+description = "Professional FastMCP server for Slack workspace automation with 25 tools"
 readme = "README.md"
 license = {file = "LICENSE"}
 authors = [

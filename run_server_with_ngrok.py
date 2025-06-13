@@ -222,7 +222,7 @@ def main():
             print("1. Yukarıdaki config'i ~/.cursor/mcp.json dosyasına ekleyin")
             print("2. Cursor'u yeniden başlatın")
             print("3. Tools tab'de 'slack-mcp-server-ngrok' aktif edin")
-            print("4. 29 Slack tool'u kullanmaya başlayın!")
+            print("4. 25 Slack tool'u kullanmaya başlayın!")
         else:
             print("❌ Ngrok tunnel başlatılamadı, sadece local erişim")
     

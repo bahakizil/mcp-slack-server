@@ -3,7 +3,7 @@
 Complete guide for setting up MCP Slack Server in your own workspace and connecting it to Cursor IDE.
 
 **⏱️ Total Time:** 10-15 minutes  
-**🎯 Result:** 29 powerful Slack automation tools in Cursor
+**🎯 Result:** 25 powerful Slack automation tools in Cursor
 
 ---
 
@@ -119,7 +119,7 @@ python run_server.py
 ## ✅ **Step 6: Test Your Setup**
 
 ### 6.1 Verify Tools Available
-You should see **29 Slack tools** in Cursor:
+You should see **25 Slack tools** in Cursor:
 - `send_message` - Send messages to channels
 - `list_channels` - List workspace channels
 - `add_reaction` - Add emoji reactions
@@ -290,14 +290,14 @@ After following this guide, you should have:
 - ✅ **Slack App** created and configured
 - ✅ **Bot tokens** obtained and configured
 - ✅ **MCP Server** running locally
-- ✅ **Cursor IDE** connected and showing 29 tools
+- ✅ **Cursor IDE** connected and showing 25 tools
 - ✅ **Test message** sent successfully
 
 ---
 
 ## 📚 **Next Steps**
 
-1. **Explore automation possibilities** with 29 tools
+1. **Explore automation possibilities** with 25 tools
 2. **Create custom workflows** using Cursor + Slack
 3. **Share with your team** for collaborative automation
 4. **Deploy to production** for always-on availability
@@ -313,4 +313,4 @@ After following this guide, you should have:
 
 ---
 
-**🎉 Congratulations! You now have a powerful Slack automation system running with 29 tools at your disposal!** 
+**🎉 Congratulations! You now have a powerful Slack automation system running with 25 tools at your disposal!** 

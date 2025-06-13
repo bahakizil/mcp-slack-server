@@ -189,7 +189,7 @@ def show_usage_instructions():
     print('     }')
     print('   }')
     
-    print("\n🛠️  AVAILABLE TOOLS: 29 Slack automation tools")
+    print("\n🛠️  AVAILABLE TOOLS: 25 Slack automation tools")
     print("📚 Documentation: README.md")
     print("🐛 Issues: https://github.com/bahakizil/mcp-slack-server/issues")
 

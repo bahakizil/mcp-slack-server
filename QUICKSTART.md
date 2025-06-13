@@ -106,7 +106,7 @@ Add to `~/.cursor/mcp.json`:
 
 1. **Restart Cursor** completely
 2. Go to **Tools** tab → Enable `slack-mcp-server`
-3. You should see **29 Slack tools** available! 🎉
+3. You should see **25 Slack tools** available! 🎉
 
 ## 🛠️ Available Tools
 
@@ -164,7 +164,7 @@ pip install -e .
 Once your server is running:
 
 1. **Test basic functionality:** Try sending a message to your Slack
-2. **Explore automation:** Use the 29 tools for workflow automation  
+2. **Explore automation:** Use the 25 tools for workflow automation  
 3. **Deploy for team:** Share your production URL with teammates
 4. **Customize:** Fork the repo and add your own tools
 

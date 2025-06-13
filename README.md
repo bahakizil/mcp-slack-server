@@ -1,6 +1,6 @@
 # 🚀 Professional MCP Slack Server
 
-Enterprise-grade **Model Context Protocol (MCP)** server for comprehensive Slack workspace automation. Built with **FastMCP**, **AWS deployment**, and **29+ powerful tools** for team collaboration.
+Enterprise-grade **Model Context Protocol (MCP)** server for comprehensive Slack workspace automation. Built with **FastMCP**, **AWS deployment**, and **25 powerful tools** for team collaboration.
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastMCP](https://img.shields.io/badge/FastMCP-1.0+-green.svg)](https://github.com/jlowin/fastmcp)
@@ -239,7 +239,7 @@ Add to your Cursor MCP settings:
 
 ## 🛠️ Available Tools
 
-The server provides **29 powerful tools**:
+The server provides **25 powerful tools**:
 
 ### **📤 Messaging**
 - `send_message` - Send messages to channels

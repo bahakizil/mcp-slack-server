@@ -255,7 +255,7 @@ curl -H "Accept: application/json, text/event-stream" \
 1. **Restart Cursor completely**
 2. **Go to Tools tab**
 3. **Enable `slack-mcp-server-production`**
-4. **Verify 29 tools are available**
+4. **Verify 25 tools are available**
 
 ### 6.3 Test Production Functionality
 **Try in Cursor:**
@@ -487,7 +487,7 @@ After completing this guide, you should have:
 - ✅ **App Runner service** running and healthy
 - ✅ **Production URL** accessible and responding
 - ✅ **Cursor IDE** connected to production server
-- ✅ **29 Slack tools** working in production
+- ✅ **25 Slack tools** working in production
 - ✅ **Team members** able to connect
 
 ---
