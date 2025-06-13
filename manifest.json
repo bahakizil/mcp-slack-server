@@ -1,0 +1,96 @@
+{
+  "name": "Slack MCP Server",
+  "version": "1.0.0",
+  "description": "Professional FastMCP server for Slack workspace automation",
+  "transport": "streamable-http",
+  "endpoint": "http://127.0.0.1:8000/mcp/",
+  "tools": [
+    {
+      "name": "list_channels",
+      "description": "List public Slack channels that the bot has access to",
+      "parameters": {
+        "limit": {
+          "type": "integer",
+          "default": 100,
+          "description": "Maximum number of channels to return"
+        }
+      }
+    },
+    {
+      "name": "post_message",
+      "description": "Post a message to a Slack channel",
+      "parameters": {
+        "channel_id": {
+          "type": "string",
+          "required": true,
+          "description": "Slack channel ID or name"
+        },
+        "text": {
+          "type": "string", 
+          "required": true,
+          "description": "Message text to send"
+        }
+      }
+    },
+    {
+      "name": "reply_to_thread",
+      "description": "Reply to a specific thread in a Slack channel",
+      "parameters": {
+        "channel_id": {
+          "type": "string",
+          "required": true,
+          "description": "Slack channel ID"
+        },
+        "thread_ts": {
+          "type": "string",
+          "required": true,
+          "description": "Thread timestamp"
+        },
+        "text": {
+          "type": "string",
+          "required": true,
+          "description": "Reply message text"
+        }
+      }
+    },
+    {
+      "name": "add_reaction",
+      "description": "Add a reaction emoji to a message in Slack",
+      "parameters": {
+        "channel_id": {
+          "type": "string",
+          "required": true,
+          "description": "Slack channel ID"
+        },
+        "timestamp": {
+          "type": "string",
+          "required": true,
+          "description": "Message timestamp"
+        },
+        "reaction": {
+          "type": "string",
+          "required": true,
+          "description": "Emoji reaction name (without colons)"
+        }
+      }
+    }
+  ],
+  "resources": [],
+  "environment_variables": [
+    {
+      "name": "SLACK_BOT_TOKEN",
+      "description": "Slack Bot Token (xoxb-...)",
+      "required": true
+    },
+    {
+      "name": "SLACK_SIGNING_SECRET", 
+      "description": "Slack Signing Secret",
+      "required": false
+    },
+    {
+      "name": "FASTMCP_PORT",
+      "description": "Server port number",
+      "default": "8000"
+    }
+  ]
+} 
