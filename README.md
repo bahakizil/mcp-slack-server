@@ -384,6 +384,8 @@ ENVIRONMENT=production
 
 ## 📚 Documentation
 
+- **[Installation Guide](INSTALLATION_GUIDE.md)** - Complete step-by-step setup
+- **[Quick Start](QUICKSTART.md)** - Get running in 5 minutes
 - **[API Reference](docs/api-reference.md)** - Complete tool documentation
 - **[Deployment Guide](docs/deployment.md)** - Detailed setup instructions
 - **[Troubleshooting](docs/troubleshooting.md)** - Common issues & solutions
