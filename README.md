@@ -160,6 +160,25 @@ docker run -p 8000:8000 \
   mcp-slack-server
 ```
 
+#### 🌐 **Option D: Ngrok Tunnel (Team Sharing)**
+
+```bash
+# Install ngrok
+brew install ngrok  # macOS
+# or download from ngrok.com
+
+# Run MCP server with ngrok tunnel
+python run_server_with_ngrok.py --ngrok
+
+# With auth token (recommended)
+python run_server_with_ngrok.py --ngrok --ngrok-token YOUR_TOKEN
+```
+
+**Result:** Public URL like `https://abc123.ngrok.io/mcp`  
+**Use case:** Share with team members, remote access, quick demos
+
+See [NGROK_GUIDE.md](NGROK_GUIDE.md) for detailed instructions.
+
 ## 🔧 MCP Client Configuration
 
 ### **Cursor IDE Integration**
@@ -173,6 +192,21 @@ Add to your Cursor MCP settings:
     "slack-mcp-server": {
       "transport": "http",
       "url": "http://localhost:8000/mcp"
+    }
+  }
+}
+```
+
+**Ngrok Tunnel (Team Sharing):**
+```json
+{
+  "mcp": {
+    "slack-mcp-server-ngrok": {
+      "transport": "streamable-http",
+      "url": "https://YOUR-NGROK-URL.ngrok.io/mcp/",
+      "headers": {
+        "Accept": "application/json, text/event-stream"
+      }
     }
   }
 }

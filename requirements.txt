@@ -21,4 +21,7 @@ mypy>=1.7.0,<2.0.0
 cryptography>=41.0.0
 
 # Monitoring & Logging
-structlog>=23.2.0,<24.0.0 
+structlog>=23.2.0,<24.0.0
+
+# Ngrok integration (optional)
+requests>=2.31.0,<3.0.0 
