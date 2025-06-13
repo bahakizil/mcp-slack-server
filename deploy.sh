@@ -161,7 +161,7 @@ show_instructions() {
     
     echo ""
     echo "4. 🔧 Update your MCP client configuration:"
-    echo "   {\"
+    echo "   {"
     echo "     \"mcp\": {"
     echo "       \"slack-mcp-server\": {"
     echo "         \"transport\": \"streamable-http\","
@@ -202,4 +202,4 @@ main() {
 trap 'echo -e "\n❌ Deployment cancelled by user"; exit 1' INT
 
 # Run main function
-main 
+main "$@" 
