@@ -80,29 +80,12 @@ def install_dependencies():
         print("❌ Python 3.11+ is required")
         sys.exit(1)
     
-    # Install package in development mode
-    run_command("pip install -e .[dev,test]")
+    # Install package in production mode
+    run_command("pip install -e .")
     print("✅ Dependencies installed successfully")
 
 
-def setup_git_hooks():
-    """Setup pre-commit hooks."""
-    print("\n🪝 Setting up git hooks...")
-    try:
-        run_command("pre-commit install")
-        print("✅ Pre-commit hooks installed")
-    except:
-        print("⚠️  Pre-commit hooks setup skipped (optional)")
 
-
-def run_tests():
-    """Run test suite to verify installation."""
-    print("\n🧪 Running tests to verify installation...")
-    try:
-        run_command("pytest --tb=short")
-        print("✅ All tests passed!")
-    except:
-        print("⚠️  Some tests failed, but installation should work")
 
 
 def show_usage_instructions():
@@ -156,8 +139,6 @@ def main():
         # Setup steps
         install_dependencies()
         create_env_config()
-        setup_git_hooks()
-        run_tests()
         show_usage_instructions()
         
     except KeyboardInterrupt:

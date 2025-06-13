@@ -45,7 +45,7 @@ git clone https://github.com/bahakizil/mcp-slack-server.git
 cd mcp-slack-server
 
 # 2. Install dependencies  
-pip install -e ".[dev,test]"
+pip install -e .
 
 # 3. Configure environment
 cp env.example.json env.json
@@ -132,7 +132,7 @@ Once connected, you can use these tools via any MCP client:
 
 **❌ "Module not found" error:**
 ```bash
-pip install -e ".[dev,test]"
+pip install -e .
 ```
 
 **❌ Cursor shows red tools:**

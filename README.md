@@ -2,7 +2,6 @@
 
 Enterprise-grade **Model Context Protocol (MCP)** server for comprehensive Slack workspace automation. Built with **FastMCP**, **AWS deployment**, and **29+ powerful tools** for team collaboration.
 
-[![CI/CD Pipeline](https://github.com/bahakizil/mcp-slack-server/actions/workflows/ci.yml/badge.svg)](https://github.com/bahakizil/mcp-slack-server/actions)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastMCP](https://img.shields.io/badge/FastMCP-1.0+-green.svg)](https://github.com/jlowin/fastmcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -120,7 +119,7 @@ nano env.json
 
 ```bash
 # Install dependencies
-pip install -e ".[dev,test]"
+pip install -e .
 
 # Run server
 python run_server.py

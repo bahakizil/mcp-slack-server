@@ -178,7 +178,7 @@ Once connected, you can use these tools via Cursor:
 
 ### ❌ **"Module not found" error:**
 ```bash
-pip install -e ".[dev,test]"
+pip install -e .
 ```
 
 ### ❌ **Cursor shows red tools:**
@@ -226,7 +226,7 @@ If automated setup doesn't work:
 ### Manual Installation
 ```bash
 # 1. Install dependencies
-pip install -e ".[dev,test]"
+pip install -e .
 
 # 2. Create configuration
 cp env.example.json env.json
