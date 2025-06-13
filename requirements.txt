@@ -7,6 +7,7 @@ python-dotenv>=1.0.1,<2.0.0
 
 # MCP Framework
 mcp>=1.0.0
+fastmcp>=2.7.0,<3.0.0
 
 # Development Dependencies (optional)
 pytest>=7.4.0,<8.0.0

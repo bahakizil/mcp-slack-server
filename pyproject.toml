@@ -9,10 +9,10 @@ description = "Professional FastMCP server for Slack workspace automation with 3
 readme = "README.md"
 license = {file = "LICENSE"}
 authors = [
-    {name = "Your Name", email = "your.email@domain.com"}
+    {name = "Baha Kızıl", email = "bahakizil@me.com"}
 ]
 maintainers = [
-    {name = "Your Name", email = "your.email@domain.com"}
+    {name = "Baha Kızıl", email = "bahakizil@me.com"}
 ]
 keywords = ["slack", "mcp", "automation", "chatbot", "fastapi", "ai"]
 classifiers = [
@@ -35,6 +35,7 @@ dependencies = [
     "pydantic>=2.5.0,<3.0.0",
     "python-dotenv>=1.0.1,<2.0.0",
     "mcp>=1.0.0",
+    "fastmcp>=2.7.0,<3.0.0",
     "structlog>=23.2.0,<24.0.0",
     "cryptography>=41.0.0",
 ]
@@ -58,10 +59,10 @@ test = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/slack-mcp-server"
-Documentation = "https://github.com/yourusername/slack-mcp-server#readme"
-Repository = "https://github.com/yourusername/slack-mcp-server.git"
-"Bug Tracker" = "https://github.com/yourusername/slack-mcp-server/issues"
+Homepage = "https://github.com/bahakizil/mcp-slack-server"
+Documentation = "https://github.com/bahakizil/mcp-slack-server#readme"
+Repository = "https://github.com/bahakizil/mcp-slack-server.git"
+"Bug Tracker" = "https://github.com/bahakizil/mcp-slack-server/issues"
 
 [project.scripts]
 slack-mcp-server = "slack_mcp_app.cli:main"
