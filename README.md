@@ -1,197 +1,433 @@
-# Slack MCP Server
+# 🚀 Professional MCP Slack Server
 
-This repository contains a **FastMCP** server that exposes a handful of
-Slack automations (posting messages, reacting, …) as **MCP tools** so that
-LLM agents, Claude Desktop, LiteLLM or any other MCP-compatible client can
-interact with your company Slack workspace in a safe, auditable way.
+Enterprise-grade **Model Context Protocol (MCP)** server for comprehensive Slack workspace automation. Built with **FastMCP**, **AWS deployment**, and **29+ powerful tools** for team collaboration.
 
-## Features
+[![CI/CD Pipeline](https://github.com/bahakizil/mcp-slack-server/actions/workflows/ci.yml/badge.svg)](https://github.com/bahakizil/mcp-slack-server/actions)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![FastMCP](https://img.shields.io/badge/FastMCP-1.0+-green.svg)](https://github.com/jlowin/fastmcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-* `list_channels`   – List public channels the bot can access
-* `post_message`    – Send a plain-text message to a channel
-* `reply_to_thread` – Reply inside an existing thread
-* `add_reaction`    – React to a specific message with an emoji
+## 🌟 Features
 
-All calls are executed through the official `slack_sdk` and require a
-**bot token** with the corresponding permissions (`channels:read`,
-`chat:write`, `reactions:write`).
+### 📧 **Message Management**
+- Send messages to channels
+- Reply to threads
+- Search messages across workspace
+- Delete and edit messages
+- Schedule messages for later
 
-## Production Deployment
+### 👥 **Channel & User Management**
+- List channels and users
+- Create and archive channels
+- Join/leave channels
+- Set channel topics and descriptions
+- User status management
 
-🌐 **Live Production Server**: `https://qg7p6udte6.us-east-1.awsapprunner.com/mcp`
+### 📎 **File Operations**
+- Upload files to channels
+- List and manage workspace files
+- Delete files with permissions
 
-The server is deployed on AWS App Runner and ready for use with MCP clients like Cursor.
+### 🎭 **Reactions & Interactions**
+- Add/remove emoji reactions
+- Pin/unpin important messages
+- Custom emoji management
 
-### Team Setup - Connecting from Cursor
+### ⏰ **Automation**
+- Create reminders
+- Conversation history analysis
+- Real-time notifications
+- Thread management
 
-**For your team members:** Add this to your Cursor MCP configuration (`~/.cursor/mcp.json`):
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Python 3.11+**
+- **Slack App** with appropriate permissions
+- **AWS Account** (for cloud deployment)
+- **Git**
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/bahakizil/mcp-slack-server.git
+cd mcp-slack-server
+```
+
+### 2. Create Slack App
+
+1. Go to [Slack API Console](https://api.slack.com/apps)
+2. Create new app "From scratch"
+3. Name: `MCP Slack Server` 
+4. Choose your workspace
+
+#### Required OAuth Scopes:
+
+**Bot Token Scopes:**
+```
+channels:read, channels:write, channels:history
+chat:write, chat:write.public
+files:read, files:write
+reactions:read, reactions:write
+users:read, users:read.email
+reminders:write
+pins:read, pins:write
+```
+
+**User Token Scopes (Optional):**
+```
+search:read, users.profile:write
+reminders:write, channels:read
+```
+
+3. Install app to workspace
+4. Copy **Bot User OAuth Token** (`xoxb-...`)
+5. Copy **Signing Secret** from Basic Information
+
+### 3. Configure Environment
+
+```bash
+# Copy template
+cp env.example.json env.json
+
+# Edit with your tokens
+nano env.json
+```
+
+**env.json:**
+```json
+{
+  "ImageRepository": {
+    "ImageConfiguration": {
+      "RuntimeEnvironmentVariables": {
+        "SLACK_BOT_TOKEN": "xoxb-YOUR-BOT-TOKEN-HERE",
+        "SLACK_SIGNING_SECRET": "your-signing-secret-here",
+        "SLACK_USER_TOKEN": "xoxp-YOUR-USER-TOKEN-HERE",
+        "FASTMCP_PORT": "8000",
+        "FASTMCP_HOST": "0.0.0.0",
+        "LOG_LEVEL": "INFO",
+        "ENVIRONMENT": "production"
+      }
+    }
+  }
+}
+```
+
+### 4. Installation Options
+
+#### 🖥️ **Option A: Local Development**
+
+```bash
+# Install dependencies
+pip install -e ".[dev,test]"
+
+# Run server
+python run_server.py
+
+# Or use CLI
+slack-mcp-server --host 0.0.0.0 --port 8000
+```
+
+**Server will be available at:** `http://localhost:8000/mcp`
+
+#### ☁️ **Option B: AWS Cloud Deployment**
+
+**Prerequisites:**
+- AWS CLI configured
+- Docker installed
+
+```bash
+# Configure AWS credentials
+aws configure
+
+# Deploy to AWS App Runner
+./deploy.sh
+```
+
+**Production URL:** `https://YOUR-SERVICE.us-east-1.awsapprunner.com/mcp`
+
+#### 🐳 **Option C: Docker**
+
+```bash
+# Build image
+docker build -t mcp-slack-server .
+
+# Run container
+docker run -p 8000:8000 \
+  -e SLACK_BOT_TOKEN="xoxb-..." \
+  -e SLACK_SIGNING_SECRET="your-secret" \
+  mcp-slack-server
+```
+
+## 🔧 MCP Client Configuration
+
+### **Cursor IDE Integration**
+
+Add to your Cursor MCP settings:
+
+**Local Development:**
+```json
+{
+  "mcp": {
+    "slack-mcp-server": {
+      "transport": "http",
+      "url": "http://localhost:8000/mcp"
+    }
+  }
+}
+```
+
+**Production Deployment:**
+```json
+{
+  "mcp": {
+    "slack-mcp-server": {
+      "transport": "streamable-http",
+      "url": "https://YOUR-SERVICE.us-east-1.awsapprunner.com/mcp/",
+      "headers": {
+        "Accept": "application/json, text/event-stream",
+        "Cache-Control": "no-cache"
+      }
+    }
+  }
+}
+```
+
+### **Claude Desktop Integration**
 
 ```json
 {
   "mcpServers": {
-    "slack-fastmcp-aws": {
-      "transport": "http",
-      "url": "https://qg7p6udte6.us-east-1.awsapprunner.com/mcp/"
+    "slack-automation": {
+      "command": "slack-mcp-server",
+      "args": ["--port", "8000"]
     }
   }
 }
 ```
 
-**Quick Setup Script for Team:**
+## 🛠️ Available Tools
+
+The server provides **29 powerful tools**:
+
+### **📤 Messaging**
+- `send_message` - Send messages to channels
+- `reply_to_message` - Reply in threads
+- `delete_message` - Delete messages
+- `schedule_message` - Schedule future messages
+
+### **🔍 Search & Discovery**
+- `search_messages` - Search across workspace
+- `get_conversation_history` - Get channel history
+- `get_thread_replies` - Get thread conversations
+
+### **👥 People & Channels**
+- `list_channels` - List workspace channels
+- `list_users` - List workspace members
+- `get_user_info` - Get detailed user info
+- `find_user_by_email` - Find users by email
+
+### **🏗️ Channel Management**
+- `create_channel` - Create new channels
+- `archive_channel` - Archive channels
+- `set_channel_topic` - Set channel topics
+- `set_channel_description` - Set descriptions
+
+### **📎 File Operations**
+- `upload_file` - Upload files to channels
+- `list_files` - List workspace files
+- `get_file` - Get file information
+- `delete_file` - Delete files
+
+### **🎭 Interactions**
+- `add_reaction` - Add emoji reactions
+- `pin_message` - Pin important messages
+- `unpin_message` - Unpin messages
+
+### **⚙️ Advanced**
+- `set_user_status` - Update user status
+- `create_reminder` - Set reminders
+- `get_team_info` - Get workspace info
+- `list_emojis` - List custom emojis
+
+## 🧪 Development
+
+### **Testing**
+
 ```bash
-#!/bin/bash
-echo "🔧 Slack MCP kurulumu başlıyor..."
+# Run all tests
+pytest
 
-# Create Cursor config directory
-mkdir -p ~/.cursor
+# With coverage
+pytest --cov=slack_mcp_app --cov-report=html
 
-# Backup existing config
-if [ -f ~/.cursor/mcp.json ]; then
-    cp ~/.cursor/mcp.json ~/.cursor/mcp.json.backup
-    echo "📦 Mevcut config yedeklendi"
-fi
+# Run specific test
+pytest tests/test_slack_mcp_server.py::TestSlackMCPServer::test_list_channels
+```
 
-# Add Slack MCP config
-cat >> ~/.cursor/mcp.json << 'EOF'
+### **Code Quality**
+
+```bash
+# Format code
+black .
+isort .
+
+# Lint
+flake8 .
+mypy slack_mcp_app/
+
+# Pre-commit hooks
+pre-commit install
+pre-commit run --all-files
+```
+
+### **Security Scanning**
+
+```bash
+# Security vulnerabilities
+bandit -r slack_mcp_app/
+
+# Dependency security
+safety check
+```
+
+## 🔒 Security
+
+- ✅ **Token Encryption**: All tokens stored securely
+- ✅ **Environment Isolation**: Environment variables only
+- ✅ **Rate Limiting**: Built-in request throttling  
+- ✅ **CORS Protection**: Configurable origins
+- ✅ **Security Scanning**: Automated vulnerability checks
+
+**Security Policy:** [SECURITY.md](SECURITY.md)
+
+## 📊 Monitoring & Logs
+
+### **Health Checks**
+
+```bash
+# Local
+curl http://localhost:8000/health
+
+# Production  
+curl https://YOUR-SERVICE.us-east-1.awsapprunner.com/health
+```
+
+### **Logs**
+
+```bash
+# View server logs
+docker logs mcp-slack-server
+
+# AWS CloudWatch (for App Runner)
+aws logs tail /aws/apprunner/mcp-slack-server --follow
+```
+
+### **Metrics**
+
+- Request/response times
+- Error rates
+- Tool usage statistics
+- Memory/CPU utilization
+
+## 🔄 CI/CD Pipeline
+
+Automated **GitHub Actions** workflow:
+
+1. **🧪 Testing**: Python 3.11 & 3.12
+2. **🎨 Linting**: Black, isort, flake8, mypy
+3. **🔒 Security**: Bandit, Safety scanning
+4. **🐳 Docker**: Multi-platform builds
+5. **🚀 Deployment**: AWS App Runner
+6. **📢 Notifications**: Slack alerts
+
+**Pipeline Status:** [![CI/CD](https://github.com/bahakizil/mcp-slack-server/actions/workflows/ci.yml/badge.svg)](https://github.com/bahakizil/mcp-slack-server/actions)
+
+## 🌍 Multi-Team Setup
+
+### **Shared Configuration**
+
+For team members to use the same deployment:
+
+1. **Share the production URL**
+2. **Provide MCP configuration JSON**
+3. **No local setup required!**
+
+**Team Configuration:**
+```json
 {
-  "mcpServers": {
-    "slack-fastmcp-aws": {
-      "transport": "http",
-      "url": "https://qg7p6udte6.us-east-1.awsapprunner.com/mcp/"
+  "mcp": {
+    "slack-team-automation": {
+      "transport": "streamable-http",
+      "url": "https://YOUR-SHARED-SERVICE.us-east-1.awsapprunner.com/mcp/",
+      "headers": {
+        "Accept": "application/json, text/event-stream"
+      }
     }
   }
 }
-EOF
-
-echo "✅ Slack MCP konfigürasyonu hazır!"
-echo "🔄 Cursor'u yeniden başlat ve Tools sekmesinden 'slack-fastmcp-aws' enable et"
-echo "🎯 29 Slack tool'u kullanılabilir olacak!"
 ```
 
-**Manual Setup:**
-1. Create/edit `~/.cursor/mcp.json` file
-2. Add the JSON configuration above
-3. Restart Cursor completely
-4. Go to Tools tab and enable `slack-fastmcp-aws`
-5. You should see 29 Slack tools available! 🎉
-
-**Features for Team:**
-- ✅ **Multi-user Support**: Everyone can connect simultaneously
-- ✅ **Centralized Server**: Single AWS endpoint for the whole team
-- ✅ **29 Slack Tools**: Full Slack workspace automation
-- ✅ **Real-time**: Instant messaging, reactions, and channel management
-
-## Local Development
+### **Environment Separation**
 
 ```bash
-# 1. Clone / install dependencies
-conda env create -f environment.yml
-conda activate slack-mcp
+# Development
+ENVIRONMENT=development
 
-# 2. Set up environment variables in env.json
-# Required: SLACK_BOT_TOKEN
-# Optional: SLACK_SIGNING_SECRET, FASTMCP_PORT
+# Staging  
+ENVIRONMENT=staging
 
-# 3. Run the server locally
-python run_server.py        # Starts on http://127.0.0.1:8000
-
-# 4. Test with example client
-export MCP_URL=http://127.0.0.1:8000/mcp
-python example_client.py
+# Production
+ENVIRONMENT=production
 ```
 
-## AWS Deployment
+## 📚 Documentation
 
+- **[API Reference](docs/api-reference.md)** - Complete tool documentation
+- **[Deployment Guide](docs/deployment.md)** - Detailed setup instructions
+- **[Troubleshooting](docs/troubleshooting.md)** - Common issues & solutions
+- **[Security Policy](SECURITY.md)** - Security guidelines
+
+## 🤝 Contributing
+
+1. **Fork** the repository
+2. **Create** feature branch: `git checkout -b feature/amazing-feature`
+3. **Commit** changes: `git commit -m 'Add amazing feature'`
+4. **Push** to branch: `git push origin feature/amazing-feature`
+5. **Open** Pull Request
+
+**Development Setup:**
 ```bash
-# 1. Build and deploy to App Runner
-chmod +x deploy.sh
-./deploy.sh
+# Clone your fork
+git clone https://github.com/YOUR-USERNAME/mcp-slack-server.git
 
-# 2. Monitor deployment
-aws apprunner describe-service --service-arn <service-arn>
+# Install development dependencies
+pip install -e ".[dev,test]"
+
+# Run pre-commit hooks
+pre-commit install
 ```
 
-## Environment Variables
+## 📄 License
 
-* `SLACK_BOT_TOKEN` (required) - Your Slack bot token (xoxb-...)
-* `SLACK_SIGNING_SECRET` (optional) - Slack signing secret for validation
-* `FASTMCP_PORT` (optional) - Server port, defaults to 8000
-* `PORT` (AWS App Runner) - Container port for cloud deployment
+This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file.
 
-## Slack Bot Setup
+## 🆘 Support
 
-1. Create a Slack app at https://api.slack.com/apps
-2. Enable bot features and install to workspace
-3. Get bot token from "OAuth & Permissions"
-4. Required scopes: `channels:read`, `chat:write`, `reactions:write`
+- **🐛 Issues**: [GitHub Issues](https://github.com/bahakizil/mcp-slack-server/issues)
+- **💬 Discussions**: [GitHub Discussions](https://github.com/bahakizil/mcp-slack-server/discussions)
+- **📧 Security**: See [SECURITY.md](SECURITY.md)
 
-## Tools Available
+## 🙏 Acknowledgments
 
-| Tool | Description | Parameters |
-|------|-------------|------------|
-| `list_channels` | List public channels | `limit` (optional, default: 100) |
-| `post_message` | Send message to channel | `channel_id`, `text` |
-| `reply_to_thread` | Reply to thread | `channel_id`, `thread_ts`, `text` |
-| `add_reaction` | Add emoji reaction | `channel_id`, `timestamp`, `reaction` |
+- **[FastMCP](https://github.com/jlowin/fastmcp)** - Excellent MCP framework
+- **[Slack SDK](https://github.com/slackapi/python-slack-sdk)** - Official Python SDK
+- **[AWS App Runner](https://aws.amazon.com/apprunner/)** - Serverless deployment
+- **Community** - Thank you for contributions!
 
-## Testing
+---
 
-Test the production server:
-```bash
-npx -y @modelcontextprotocol/inspector https://qg7p6udte6.us-east-1.awsapprunner.com/mcp
-```
+**⭐ Star this repository if it helped you automate your Slack workspace!**
 
-Health check:
-```bash
-curl https://qg7p6udte6.us-east-1.awsapprunner.com/health
-```
-
-## Quick start
-
-```bash
-# 1. Clone / install dependencies
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-
-# 2. Provide your Slack credentials
-export SLACK_BOT_TOKEN="xoxb-…"
-
-# 3. Run the server (Streamable HTTP on :8000 by default)
-python -m mcp.slack_mcp_server  # or   uv run mcp.slack_mcp_server
-```
-
-The server is now reachable at `http://127.0.0.1:8000/mcp`. Point any MCP
-client to this URL and call the tools just like any other FastMCP server.
-
-### Using Claude Desktop / Inspector
-
-```bash
-npx -y @modelcontextprotocol/inspector http://127.0.0.1:8000/mcp
-```
-
-Inspect the live schema, test tools and monitor traffic.
-
-## Production deployment
-
-* **Docker** – Build an image from the project root:
-  ```Dockerfile
-  FROM python:3.12-slim
-  WORKDIR /app
-  COPY requirements.txt .
-  RUN pip install --no-cache-dir -r requirements.txt
-  COPY mcp/ ./mcp
-  CMD ["python", "-m", "mcp.slack_mcp_server"]
-  ```
-* **Systemd + uvicorn** – If you prefer an ASGI process manager.
-
-Ensure the `SLACK_BOT_TOKEN` environment variable is present in the
-runtime environment.
-
-## Extending the server
-
-This is merely a starting point – add as many tools, resources and prompts
-as your workflows require. FastMCP's decorator syntax makes it trivial to
-expose additional Slack endpoints or even third-party services under the
-same MCP server.
-
-Happy hacking! 🎉 
+**🔗 Share with your team for collaborative automation!** 
