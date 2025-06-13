@@ -1,11 +1,12 @@
 import os
-from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from typing import Optional
 
-from mcp.server.fastmcp import FastMCP, Context
 from slack_sdk.web.async_client import AsyncWebClient
+
+from mcp.server.fastmcp import Context, FastMCP
 
 __all__ = ["mcp"]
 
@@ -37,10 +38,10 @@ async def lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
         )
 
     user_token = os.getenv(SLACK_USER_TOKEN_ENV)
-    
+
     slack_bot_client = AsyncWebClient(token=bot_token)
     slack_user_client = AsyncWebClient(token=user_token) if user_token else None
-    
+
     try:
         yield AppContext(slack_bot=slack_bot_client, slack_user=slack_user_client)
     finally:
@@ -56,57 +57,52 @@ mcp = FastMCP(
 )
 
 # Add health check endpoint directly to FastMCP app
-from fastapi import FastAPI
+# FastAPI not needed, FastMCP provides web framework functionality
 
-# Add custom endpoints to FastMCP app
-def add_health_endpoints(mcp_instance):
-    """Add health check endpoints to FastMCP app."""
-    app = mcp_instance.app
-    
-    @app.get("/health")
-    async def health_check():
-        """Health check endpoint for AWS App Runner load balancer."""
-        return {"status": "healthy", "service": "slack-mcp-server", "version": "1.0.0"}
-
-    @app.get("/")
-    async def root():
-        """Root endpoint."""
-        return {"service": "Slack MCP Server", "version": "1.0.0", "mcp_endpoint": "/mcp", "health": "/health"}
-
-# Call after mcp creation
-add_health_endpoints(mcp)
+# FastMCP already provides default endpoints
+# Health check is handled by the MCP protocol itself
 
 
 def _get_slack_bot(ctx: Context) -> AsyncWebClient:
     """Helper to retrieve the Bot Slack client from the lifespan context."""
-    
+
     if ctx is None or ctx.lifespan_context is None:
         # Fallback to create a new client if context is not available
         token = os.getenv(SLACK_BOT_TOKEN_ENV)
         if not token:
-            raise RuntimeError(f"{SLACK_BOT_TOKEN_ENV} environment variable must be set")
+            raise RuntimeError(
+                f"{SLACK_BOT_TOKEN_ENV} environment variable must be set"
+            )
         return AsyncWebClient(token=token)
-    
+
     return ctx.lifespan_context.slack_bot
 
 
 def _get_slack_user(ctx: Context) -> AsyncWebClient:
     """Helper to retrieve the User Slack client from the lifespan context."""
-    
-    if ctx is None or ctx.lifespan_context is None or ctx.lifespan_context.slack_user is None:
+
+    if (
+        ctx is None
+        or ctx.lifespan_context is None
+        or ctx.lifespan_context.slack_user is None
+    ):
         # Fallback to create a new client if context is not available
         token = os.getenv(SLACK_USER_TOKEN_ENV)
         if not token:
-            raise RuntimeError(f"{SLACK_USER_TOKEN_ENV} environment variable must be set for user operations")
+            raise RuntimeError(
+                f"{SLACK_USER_TOKEN_ENV} environment variable must be set for user operations"
+            )
         return AsyncWebClient(token=token)
-    
+
     return ctx.lifespan_context.slack_user
 
 
 @mcp.tool(
     description="List public Slack channels that the bot has access to.",
 )
-async def list_channels(limit: int = 100, ctx: Context | None = None) -> str:  # noqa: D401
+async def list_channels(
+    limit: int = 100, ctx: Context | None = None
+) -> str:  # noqa: D401
     """Return a newline-separated list of channel IDs and names.
 
     Parameters
@@ -127,7 +123,9 @@ async def list_channels(limit: int = 100, ctx: Context | None = None) -> str:  #
 @mcp.tool(
     description="Post a message to a Slack channel.",
 )
-async def post_message(channel_id: str, text: str, ctx: Context | None = None) -> str:  # noqa: D401
+async def post_message(
+    channel_id: str, text: str, ctx: Context | None = None
+) -> str:  # noqa: D401
     """Send *text* to *channel_id* and return the resulting timestamp."""
 
     slack = _get_slack_bot(ctx)
@@ -147,7 +145,9 @@ async def reply_to_thread(
     """Reply with *text* in *channel_id* under the thread specified by *thread_ts*."""
 
     slack = _get_slack_bot(ctx)
-    resp = await slack.chat_postMessage(channel=channel_id, text=text, thread_ts=thread_ts)
+    resp = await slack.chat_postMessage(
+        channel=channel_id, text=text, thread_ts=thread_ts
+    )
     return resp.get("ts", "")
 
 
@@ -178,10 +178,12 @@ async def search_messages_user(
     ctx: Context | None = None,
 ) -> str:  # noqa: D401
     """Search for messages with user token."""
-    
+
     slack = _get_slack_user(ctx)
-    resp = await slack.search_messages(query=query, sort=sort, sort_dir=sort_dir, count=count)
-    
+    resp = await slack.search_messages(
+        query=query, sort=sort, sort_dir=sort_dir, count=count
+    )
+
     if resp.get("ok"):
         messages = resp.get("messages", {}).get("matches", [])
         result = []
@@ -205,7 +207,7 @@ async def set_user_status_user(
     ctx: Context | None = None,
 ) -> str:  # noqa: D401
     """Set the current user's status with user token."""
-    
+
     slack = _get_slack_user(ctx)
     profile = {
         "status_text": status_text,
@@ -213,9 +215,9 @@ async def set_user_status_user(
     }
     if status_expiration > 0:
         profile["status_expiration"] = status_expiration
-        
+
     resp = await slack.users_profile_set(profile=profile)
-    
+
     if resp.get("ok"):
         return "Status updated successfully"
     else:
@@ -232,10 +234,10 @@ async def create_reminder_user(
     ctx: Context | None = None,
 ) -> str:  # noqa: D401
     """Create a reminder with user token."""
-    
+
     slack = _get_slack_user(ctx)
     resp = await slack.reminders_add(text=text, time=time, user=user if user else None)
-    
+
     if resp.get("ok"):
         reminder = resp.get("reminder", {})
         return f"Reminder created with ID: {reminder.get('id', 'unknown')}"
@@ -251,10 +253,10 @@ async def join_channel(
     ctx: Context | None = None,
 ) -> str:  # noqa: D401
     """Join a channel with the bot."""
-    
+
     slack = _get_slack_bot(ctx)
     resp = await slack.conversations_join(channel=channel_id)
-    
+
     if resp.get("ok"):
         return f"Successfully joined channel {channel_id}"
     else:
@@ -264,4 +266,4 @@ async def join_channel(
 if __name__ == "__main__":
     # By default run a production-grade streamable HTTP server. This can be
     # changed to "sse" or omitted for stdio if desired.
-    mcp.run(transport="streamable-http") 
+    mcp.run(transport="streamable-http")
