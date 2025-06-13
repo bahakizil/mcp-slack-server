@@ -123,9 +123,6 @@ pip install -e .
 
 # Run server
 python run_server.py
-
-# Or use CLI
-slack-mcp-server --host 0.0.0.0 --port 8000
 ```
 
 **Server will be available at:** `http://localhost:8000/mcp`

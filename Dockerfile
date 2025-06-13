@@ -81,5 +81,5 @@ LABEL org.opencontainers.image.source="https://github.com/yourusername/slack-mcp
 LABEL org.opencontainers.image.documentation="https://github.com/yourusername/slack-mcp-server#readme"
 LABEL org.opencontainers.image.licenses="MIT"
 
-# Use the CLI for better configuration management
-CMD ["slack-mcp-server", "--host", "0.0.0.0", "--port", "8000", "--log-level", "INFO"] 
+# Start the MCP server directly
+CMD ["python", "run_server.py"] 

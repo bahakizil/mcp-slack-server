@@ -99,8 +99,7 @@ def show_usage_instructions():
     print("   python run_server.py")
     print("   # Server: http://localhost:8000/mcp")
     
-    print("\n📍 CLI USAGE:")
-    print("   slack-mcp-server --host 0.0.0.0 --port 8000")
+
     
     print("\n📍 DOCKER:")
     print("   docker build -t mcp-slack-server .")

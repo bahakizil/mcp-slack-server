@@ -49,8 +49,7 @@ Documentation = "https://github.com/bahakizil/mcp-slack-server#readme"
 Repository = "https://github.com/bahakizil/mcp-slack-server.git"
 "Bug Tracker" = "https://github.com/bahakizil/mcp-slack-server/issues"
 
-[project.scripts]
-slack-mcp-server = "slack_mcp_app.cli:main"
+
 
 [tool.hatch.build.targets.wheel]
 packages = ["slack_mcp_app"]
