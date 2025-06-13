@@ -51,6 +51,7 @@ COPY --from=builder /opt/venv /opt/venv
 # Copy application code
 COPY slack_mcp_app/ ./slack_mcp_app/
 COPY run_server.py .
+COPY run_server_with_ngrok.py .
 COPY pyproject.toml .
 COPY LICENSE .
 COPY README.md .
