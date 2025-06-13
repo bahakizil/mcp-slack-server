@@ -60,8 +60,11 @@ python run_server.py
 ## ☁️ Option 3: Deploy to AWS (Production)
 
 ```bash
-# Prerequisites: AWS CLI configured, Docker installed
-aws configure  # Set your AWS credentials
+# Prerequisites: Docker installed, jq installed
+# AWS credentials will be configured automatically via setup
+
+# Setup with AWS configuration
+python setup.py  # Will ask for AWS credentials
 
 # Deploy with one command
 ./deploy.sh

@@ -5,10 +5,26 @@
 
 set -e
 
-# Configuration - Modify these as needed
-SERVICE_NAME="${SERVICE_NAME:-slack-mcp-server}"
-ECR_REPO="${ECR_REPO:-slack-mcp-server}"
-REGION="${AWS_REGION:-us-east-1}"
+# Load AWS configuration from aws.json if available
+if [ -f "aws.json" ]; then
+    echo "📋 Loading AWS configuration from aws.json..."
+    AWS_ACCOUNT_ID=$(jq -r '.aws_account_id' aws.json)
+    AWS_ACCESS_KEY_ID=$(jq -r '.aws_access_key_id' aws.json)
+    AWS_SECRET_ACCESS_KEY=$(jq -r '.aws_secret_access_key' aws.json)
+    REGION=$(jq -r '.aws_default_region' aws.json)
+    SERVICE_NAME=$(jq -r '.service_name' aws.json)
+    ECR_REPO=$(jq -r '.ecr_repository' aws.json)
+    
+    # Export AWS credentials for CLI usage
+    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+    export AWS_DEFAULT_REGION=$REGION
+else
+    # Fallback to environment variables or defaults
+    SERVICE_NAME="${SERVICE_NAME:-slack-mcp-server}"
+    ECR_REPO="${ECR_REPO:-slack-mcp-server}"
+    REGION="${AWS_REGION:-us-east-1}"
+fi
 
 # Check prerequisites
 check_prerequisites() {
@@ -32,9 +48,23 @@ check_prerequisites() {
         exit 1
     fi
     
+    # Check jq is installed for JSON parsing
+    if ! command -v jq &> /dev/null; then
+        echo "❌ jq not found. Install with: brew install jq (macOS) or apt install jq (Linux)"
+        exit 1
+    fi
+    
     # Check env.json exists
     if [ ! -f "env.json" ]; then
         echo "❌ env.json not found. Run: python setup.py"
+        exit 1
+    fi
+    
+    # Check aws.json exists if not using environment variables
+    if [ ! -f "aws.json" ] && [ -z "$AWS_ACCESS_KEY_ID" ]; then
+        echo "❌ aws.json not found and AWS credentials not set."
+        echo "   Run: python setup.py (to create aws.json)"
+        echo "   Or: aws configure (to setup AWS CLI)"
         exit 1
     fi
     
@@ -44,9 +74,19 @@ check_prerequisites() {
 # Get AWS account info
 get_aws_info() {
     echo "📊 Getting AWS account information..."
-    ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-    echo "   Account ID: $ACCOUNT_ID"
+    
+    # Use account ID from aws.json if available, otherwise get from AWS CLI
+    if [ -n "$AWS_ACCOUNT_ID" ]; then
+        ACCOUNT_ID=$AWS_ACCOUNT_ID
+        echo "   Account ID: $ACCOUNT_ID (from aws.json)"
+    else
+        ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+        echo "   Account ID: $ACCOUNT_ID (from AWS CLI)"
+    fi
+    
     echo "   Region: $REGION"
+    echo "   Service Name: $SERVICE_NAME"
+    echo "   ECR Repository: $ECR_REPO"
 }
 
 # Create ECR repository if it doesn't exist

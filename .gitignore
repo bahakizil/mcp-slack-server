@@ -154,6 +154,7 @@ Desktop.ini
 *.cer
 *.der
 env.json
+aws.json
 .env.local
 .env.production
 .env.staging

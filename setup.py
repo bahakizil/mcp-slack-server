@@ -23,7 +23,7 @@ def run_command(cmd, check=True):
 
 def create_env_config():
     """Create environment configuration from template."""
-    print("\n📝 Setting up environment configuration...")
+    print("\n📝 Setting up Slack environment configuration...")
     
     env_example = Path("env.example.json")
     env_file = Path("env.json")
@@ -68,7 +68,77 @@ def create_env_config():
     with open(env_file, 'w') as f:
         json.dump(config, f, indent=2)
     
-    print(f"✅ Configuration saved to {env_file}")
+    print(f"✅ Slack configuration saved to {env_file}")
+
+
+def create_aws_config():
+    """Create AWS configuration from template."""
+    print("\n☁️  Setting up AWS deployment configuration...")
+    
+    aws_example = Path("aws.example.json")
+    aws_file = Path("aws.json")
+    
+    if not aws_example.exists():
+        print("❌ aws.example.json not found!")
+        sys.exit(1)
+    
+    # Check if user wants AWS setup
+    setup_aws = input("\n🤔 Do you want to setup AWS deployment? (y/N): ").strip().lower()
+    if setup_aws not in ['y', 'yes']:
+        print("⏭️  Skipping AWS configuration (you can setup later)")
+        return
+    
+    if aws_file.exists():
+        print("⚠️  aws.json already exists, backing up...")
+        aws_file.rename(f"aws.json.backup")
+    
+    # Load template
+    with open(aws_example) as f:
+        config = json.load(f)
+    
+    print("\n🔑 Please provide your AWS credentials:")
+    print("   Get these from: https://console.aws.amazon.com/iam/")
+    print("   📚 Guide: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html")
+    
+    # Get AWS credentials
+    account_id = input("\n🏢 AWS Account ID (12-digit number): ").strip()
+    if not account_id.isdigit() or len(account_id) != 12:
+        print("❌ AWS Account ID should be a 12-digit number")
+        sys.exit(1)
+    
+    access_key = input("🔑 AWS Access Key ID (AKIA...): ").strip()
+    if not access_key.startswith("AKIA"):
+        print("❌ AWS Access Key ID should start with 'AKIA'")
+        sys.exit(1)
+    
+    secret_key = input("🔒 AWS Secret Access Key: ").strip()
+    
+    region = input("🌍 AWS Default Region (us-east-1): ").strip() or "us-east-1"
+    
+    # Optional: ARN for more advanced configurations
+    user_arn = input("👤 AWS User ARN (optional): ").strip()
+    
+    # Service configuration
+    service_name = input("🚀 App Runner Service Name (slack-mcp-server): ").strip() or "slack-mcp-server"
+    ecr_repo = input("📦 ECR Repository Name (slack-mcp-server): ").strip() or "slack-mcp-server"
+    
+    # Update configuration
+    config["aws_account_id"] = account_id
+    config["aws_access_key_id"] = access_key
+    config["aws_secret_access_key"] = secret_key
+    config["aws_default_region"] = region
+    config["service_name"] = service_name
+    config["ecr_repository"] = ecr_repo
+    
+    if user_arn:
+        config["aws_user_arn"] = user_arn
+    
+    # Save configuration
+    with open(aws_file, 'w') as f:
+        json.dump(config, f, indent=2)
+    
+    print(f"✅ AWS configuration saved to {aws_file}")
+    print("🔧 AWS CLI will be automatically configured for deployment")
 
 
 def install_dependencies():
@@ -138,6 +208,7 @@ def main():
         # Setup steps
         install_dependencies()
         create_env_config()
+        create_aws_config()
         show_usage_instructions()
         
     except KeyboardInterrupt:

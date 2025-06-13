@@ -130,12 +130,12 @@ python run_server.py
 #### ☁️ **Option B: AWS Cloud Deployment**
 
 **Prerequisites:**
-- AWS CLI configured
 - Docker installed
+- jq installed (`brew install jq`)
 
 ```bash
-# Configure AWS credentials
-aws configure
+# Setup with AWS credentials (interactive)
+python setup.py
 
 # Deploy to AWS App Runner
 ./deploy.sh
